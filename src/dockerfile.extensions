@@ -1,0 +1,27 @@
+ARG COMFYUI_BASE_IMAGE=comfyui-base
+FROM ${COMFYUI_BASE_IMAGE}
+
+# Extensions are handled by ComfyUI-Manager which requires git
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Required by ComfyUI-Manager
+ENV COMFYUI_PATH=/comfyui
+
+# Install optional ComfyUI-Manager dependencies
+RUN --mount=type=cache,target=/cache/uv,sharing=locked \
+    uv pip install --system --break-system-packages matrix-nio
+
+# Install required ComfyUI-Manager dependencies
+RUN --mount=type=cache,target=/cache/uv,sharing=locked \
+    uv pip install --system --break-system-packages -r /comfyui/manager_requirements.txt
+
+# Add entrypoint script
+COPY entrypoint.extensions.sh entrypoint.extensions.sh
+RUN sed -i 's/\r$//' entrypoint.extensions.sh
+RUN chmod +x entrypoint.extensions.sh
+
+# Override the entrypoint script to make ComfyUI-Manager visible in the custom_nodes directory
+ENTRYPOINT ["./entrypoint.extensions.sh"]
