@@ -2,7 +2,7 @@ ARG COMFYUI_BASE_IMAGE=comfyui-base
 FROM ${COMFYUI_BASE_IMAGE}
 
 # Extensions are handled by ComfyUI-Manager which requires git
-RU. N apt-get update && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     git \
     && rm -rf /var/lib/apt/lists/*
