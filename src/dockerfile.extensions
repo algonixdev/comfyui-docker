@@ -4,6 +4,7 @@ FROM ${COMFYUI_BASE_IMAGE}
 # Extensions are handled by ComfyUI-Manager which requires git
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+    python3-pip  \
     git \
     && rm -rf /var/lib/apt/lists/*
 
